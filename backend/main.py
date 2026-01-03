@@ -5,7 +5,7 @@ import os
 import base64
 
 
-img_path = os.path.expanduser("~/REPO1/assignment2/.localenv/resized/img1.png")
+img_path = os.path.expanduser("~/Desktop/assignment2/backend/img2.png")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -70,8 +70,19 @@ async def analyze2(file: UploadFile = File(...)):
           ],
           "stream": False
      }
+     headers = {
+        "Accept-Encoding": "identity",  # Disable compression
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+     }
      async with httpx.AsyncClient(timeout=190.0, limits=httpx.Limits(max_keepalive_connections=10)) as client:
-          response = await client.post(ollama_url, json=payload)
+          # response = await client.post(ollama_url, json=payload)
+          response = await client.post(
+            ollama_url, 
+            json=payload,
+            headers=headers
+          )
+          response.encoding = "utf-8"
           result = response.json()
      # answer = result.get("response", "No response from Ollama")
      answer = result["message"]["content"]
